@@ -333,7 +333,6 @@ version = "0.2.1"
 source = "registry+https://github.com/rust-lang/crates.io-index"
 checksum = "aa5d6084efa4a2b182ef3a8649cb6506cb4843f22cf907c6e0a799944248ae90"
 dependencies = [
- "futures-channel",
  "gloo-events",
  "js-sys",
  "wasm-bindgen",
@@ -1542,7 +1541,7 @@ checksum = "d19538ccc21819d01deaf88d6a17eae6596a12e9aafdbb97916fb49896d89de9"
 [[package]]
 name = "yew"
 version = "0.19.3"
-source = "git+https://github.com/yewstack/yew#6992a454e3c901e9d2d582adb0e8389b394e75a8"
+source = "git+https://github.com/WorldSEnder/yew?branch=hydration-node-refs#e5e85d5c95afa55244ad4e4ec8d0e4fde2ea7249"
 dependencies = [
  "console_error_panic_hook",
  "futures",
@@ -1557,14 +1556,14 @@ dependencies = [
  "wasm-bindgen",
  "wasm-bindgen-futures",
  "web-sys",
- "yew-macro",
+ "yew-macro 0.19.3 (git+https://github.com/WorldSEnder/yew?branch=hydration-node-refs)",
 ]
 
 [[package]]
 name = "yew-issue"
 version = "0.1.0"
 dependencies = [
- "gloo",
+ "gloo-timers",
  "log",
  "num_cpus",
  "once_cell",
@@ -1574,9 +1573,23 @@ dependencies = [
  "wasm-bindgen",
  "wasm-bindgen-futures",
  "wasm-logger",
- "web-sys",
  "yew",
- "yew-macro",
+ "yew-macro 0.19.3 (git+https://github.com/yewstack/yew)",
+]
+
+[[package]]
+name = "yew-macro"
+version = "0.19.3"
+source = "git+https://github.com/WorldSEnder/yew?branch=hydration-node-refs#e5e85d5c95afa55244ad4e4ec8d0e4fde2ea7249"
+dependencies = [
+ "boolinator",
+ "lazy_static",
+ "once_cell",
+ "prettyplease",
+ "proc-macro-error",
+ "proc-macro2",
+ "quote",
+ "syn",
 ]
 
 [[package]]
