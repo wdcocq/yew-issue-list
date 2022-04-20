@@ -16,7 +16,7 @@ async fn render(index_html_s: &str) -> String {
         .await
         .expect("the task has failed.");
 
-    index_html_s.replace("<body>", &format!("<body>{}", content))
+    index_html_s.replace("{insert}", &content) 
 }
 
 // cargo run --bin server
