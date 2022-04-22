@@ -9,13 +9,13 @@ pub fn app() -> Html {
     let elems = 0..10;
 
     html! {
-        <>
+        <Suspense>
         { for elems.clone().map(|number|
             html! {
                 <ToSuspendOrNot {number}/>
             }
         )}
-        </>
+        </Suspense>
     }
 }
 
@@ -30,6 +30,7 @@ fn number(props: &NumberProps) -> Html {
         <div>{props.number.to_string()}</div>
     }
 }
+
 #[function_component(SuspendedNumber)]
 fn suspended_number(props: &NumberProps) -> HtmlResult {
     use_suspend()?;
@@ -37,18 +38,20 @@ fn suspended_number(props: &NumberProps) -> HtmlResult {
         <div>{props.number.to_string()}</div>
     })
 }
+
 #[function_component(ToSuspendOrNot)]
-fn suspend_or_not(props: &NumberProps) -> Html {
+fn suspend_or_not(props: &NumberProps) -> HtmlResult {
+    use_suspend()?;
     let number = props.number;
-    html! {
-        <Suspense>
-            if number % 3 == 0 {
+    Ok(html! {
+        if number % 3 == 0 {
+            <Suspense>
                 <SuspendedNumber {number}/>
-            } else {
-                <Number {number}/>
-            }
-        </Suspense>
-    }
+            </Suspense>
+        } else {
+            <Number {number}/>
+        }
+    })
 }
 
 #[hook]
