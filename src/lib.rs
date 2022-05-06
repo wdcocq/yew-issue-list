@@ -18,29 +18,23 @@ pub fn app() -> Html {
 
     html! {
         <Suspense>
-            <ToSuspend depth={3} range={(*range).clone()}/>
+            <ToSuspend range={(*range).clone()}/>
         </Suspense>
     }
 }
 
 #[derive(Properties, PartialEq)]
 struct ToSuspendProps {
-    depth: u64,
     range: Range<u32>,
 }
 
 #[function_component(ToSuspend)]
-fn to_suspend(ToSuspendProps { depth, range }: &ToSuspendProps) -> HtmlResult {
-    use_suspend(500 / (depth + 1))?;
+fn to_suspend(ToSuspendProps { range }: &ToSuspendProps) -> HtmlResult {
+    use_suspend(100)?;
     Ok(html! {
-        if *depth > 0 {
-            <Suspense>
-                {for range.clone().map(|i|
-                    html!{ <div>{format!("{i}, depth: {depth}")}</div> }
-                )}
-                <ToSuspend depth={depth - 1} range={range.clone()}/>
-            </Suspense>
-        }
+        { for range.clone().map(|i|
+            html!{ <div key={i}>{i}</div> }
+        )}
     })
 }
 
