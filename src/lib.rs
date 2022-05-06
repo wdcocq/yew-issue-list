@@ -1,66 +1,55 @@
-use yew::{
-    prelude::*,
-    suspense::{Suspension, SuspensionResult},
-};
+use std::ops::Range;
+use yew::{prelude::*, suspense::SuspensionResult};
 use yew_macro::Properties;
 
 #[function_component(App)]
 pub fn app() -> Html {
-    let elems = 0..10;
+    let range = use_state(|| 0u32..5);
+    {
+        let range = range.clone();
+        use_effect_with_deps(
+            move |_| {
+                range.set(0..6);
+                || ()
+            },
+            (),
+        );
+    }
 
     html! {
         <Suspense>
-        { for elems.clone().map(|number|
-            html! {
-                <ToSuspendOrNot {number}/>
-            }
-        )}
+            <ToSuspend depth={3} range={(*range).clone()}/>
         </Suspense>
     }
 }
 
 #[derive(Properties, PartialEq)]
-struct NumberProps {
-    number: u32,
+struct ToSuspendProps {
+    depth: u64,
+    range: Range<u32>,
 }
 
-#[function_component(Number)]
-fn number(props: &NumberProps) -> Html {
-    html! {
-        <div>{props.number.to_string()}</div>
-    }
-}
-
-#[function_component(SuspendedNumber)]
-fn suspended_number(props: &NumberProps) -> HtmlResult {
-    use_suspend()?;
+#[function_component(ToSuspend)]
+fn to_suspend(ToSuspendProps { depth, range }: &ToSuspendProps) -> HtmlResult {
+    use_suspend(500 / (depth + 1))?;
     Ok(html! {
-        <div>{props.number.to_string()}</div>
-    })
-}
-
-#[function_component(ToSuspendOrNot)]
-fn suspend_or_not(props: &NumberProps) -> HtmlResult {
-    use_suspend()?;
-    let number = props.number;
-    Ok(html! {
-        if number % 3 == 0 {
+        if *depth > 0 {
             <Suspense>
-                <SuspendedNumber {number}/>
+                {for range.clone().map(|i|
+                    html!{ <div>{format!("{i}, depth: {depth}")}</div> }
+                )}
+                <ToSuspend depth={depth - 1} range={range.clone()}/>
             </Suspense>
-        } else {
-            <Number {number}/>
         }
     })
 }
 
 #[hook]
-pub fn use_suspend() -> SuspensionResult<()> {
-    let s = use_state(|| Suspension::from_future(async {}));
+pub fn use_suspend(_wait: u64) -> SuspensionResult<()> {
+    yew::suspense::use_future(|| async move {
+        #[cfg(target_arch = "wasm32")]
+        gloo::timers::future::sleep(std::time::Duration::from_millis(_wait)).await;
+    })?;
 
-    if s.resumed() {
-        Ok(())
-    } else {
-        Err((*s).clone())
-    }
+    Ok(())
 }
